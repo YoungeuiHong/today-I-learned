@@ -1,0 +1,19 @@
+# 12th January, 2023
+
+### AgGrid 컬럼 너비 자동 조정
+```tsx
+const onFirstDataRendered = ({ columnApi }: FirstDataRenderedEvent) => {
+    columnApi.autoSizeAllColumns(true);
+}
+```
+
+### AgGrid Row Total 표시하기
+```tsx
+const statusBar = useMemo(() => {
+    return {
+        statusPanels: [
+            {statusPanel: 'agTotalRowCountComponent', align: 'right'},
+        ]
+    }
+}, []);
+```

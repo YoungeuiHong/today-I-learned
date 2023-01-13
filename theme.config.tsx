@@ -10,6 +10,7 @@ const config: DocsThemeConfig = {
   footer: {
     text: 'Today I Learned',
   },
+  i18n: []
 }
 
 export default config

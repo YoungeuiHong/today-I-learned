@@ -7,5 +7,7 @@
     * 기존의 Docs와 달리 모든 설명이 class가 아닌 Hooks를 사용하여 작성되었다는 점이 특징적
 
 ### useRef
+* useRef is a React Hook that lets you reference a value that’s not needed for rendering.
 * useRef returns a mutable ref object whose `.current` property is initialized to the passed argument (initialValue).
 * The returned object will persist for the full lifetime of the component.
+* ref의 변화는 렌더링을 야기하지 않는다. 따라서 화면에 표시돼야 하는 정보인 경우 ref가 아닌 state를 사용하는 것이 적절하다.

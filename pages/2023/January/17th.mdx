@@ -8,7 +8,8 @@
 ## 🚀 React Query
 [React Query와 상태 관리 :: 2022년 2월 우아한테크 세미나](https://youtu.be/MArE6Hy371c)
 
-### React Query 없이 상태 관리 라이브러리만을 사용할 때 직면할 수 있는 Store 관련 문제
+### 상태 관리 라이브러리의 Store 관련 문제
+
 - Store는 전역 상태가 저장되고 관리되는 공간인데 API 통신 코드가 주를 이루게 되는 문제
 - 상태 관리 영역이 서버값을 저장하는 데까지 확장됨
 - isFetching, isError 등 API 관련 상태 코드가 반복됨
@@ -31,3 +32,56 @@
 - Fetching이나 Updating에 비동기 API가 필요함
 - 다른 사람과 공유되는 것으로 사용자가 모르는 사이에 변경될 수 있음
 - 신경 쓰지 않는다면 잠재적으로 out of date가 될 가능성을 지님
+
+### What is React Query?
+- Fetch, cache and update data in your React application without touching any 'global state'.
+
+### QueryClientProvider
+```tsx
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+const queryClient = new QueryClient();
+
+function App() {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <div></div>
+        </QueryClientProvider>
+    );
+}
+```
+
+### Queries
+- Queries은 데이터 Fetching용. 즉, CRUD 중 Reading에만 사용됨
+
+📌 Query Key
+    - React Query는 Query Key에 따라 query caching을 관리함
+    - Query는 String 형태와 Array 형태로 관리할 수 있음
+
+📌 Query Function
+    - Promise를 반환하는 함수 (데이터 resolve를 하거나 error를 throw)
+
+📌 Option
+    - Config를 커스텀 할 수 있음
+    - onSuccess, onError, onSettled: query fetching 성공/실패/완료 시 실행할 Side Effect를 정의할 수 있음
+
+```tsx
+import { useQuery } from 'react-query'
+
+function App() {
+    // todos: Query Key
+    // fetchTodoList: Query Function
+    const info = useQuery('todos', fetchTodoList);
+}
+```
+
+![Query 파일 관리](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_3.16.13.png)
+
+## ☸️ 쿠버네티스
+
+### `kubectl apply`
+[kubectl apply docs](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply)
+- 환경설정을 적용할 때 사용 (Apply a configuration to a resource by filename or stdin)
+```bash
+$ kubectl apply (-f FILENAME | -k DIRECTORY)
+```

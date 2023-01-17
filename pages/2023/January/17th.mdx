@@ -1,11 +1,11 @@
 # 17th January, 2023
 
-## 🧐 State Colocation
+## 🧩 State Colocation
 - input 요소가 여러 개일 때, 한 input의 유효성 상태 변경 때문에 모든 컴포넌트가 리렌더링 될 필요는 없음
 - 따라서 리렌더링이 필요한 컴포넌트만 분리하여, 리렌더링되는 범위를 좁히는 방법이 많이 쓰임
 - 이런 식으로 컴포넌트의 상태를 서로 관련이 있는 것들끼리만 모아 분리하여 위치시키는 방법을 State Colocation이라 함
 
-## 🚀 React Query
+## 🧐 React Query, 왜 필요할까?
 [React Query와 상태 관리 :: 2022년 2월 우아한테크 세미나](https://youtu.be/MArE6Hy371c)
 
 ### 상태 관리 라이브러리의 Store 관련 문제
@@ -35,6 +35,8 @@
 
 ### What is React Query?
 - Fetch, cache and update data in your React application without touching any 'global state'.
+
+## 🚀 React Query 사용 방법
 
 ### QueryClientProvider
 ```tsx
@@ -76,6 +78,67 @@ function App() {
 ```
 
 ![Query 파일 관리](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_3.16.13.png)
+
+### Mutations
+- Mutations는 데이터 생성/수정/삭제용으로 사용됨. 즉, CRUD 중 CUD에 사용됨
+- useQuery보다 더 심플하게 Promise 반환 함수만 있어도 된다.
+- 단,
+```tsx
+const mutation = useMutation(newTodo => {
+    return axios.post('/todos', newTodo)
+})
+```
+
+💡 useMutation
+```tsx
+const {data, error, isError, isIdle, isLoading, isPaused, isSuccess, mutate, mutateAsync, reset, status} = useMutation(mutationFn, option);
+```
+
+📌 useMutation의 반환값
+- mutate: mutation을 실행하는 함수
+- mutateAsync: mutate와 비슷하지만 Promise를 반환하는 점이 다름
+- reset: mutation 내부 상태 clean
+
+📌 useMutation의 Option
+- onMutate: 본격적인 Mutation 동작 전에 먼저 동작하는 함수. Optimistic update를 적용할 때 유용
+- Optimistic Update란? 페이스북 좋아요를 예로 살펴보면 좋아요를 누르면 일단 낙관적으로 서버 통신이 성공할 것이라 보고 UI를 먼저 업데이트하고, 만약 서버 통신이 실패를 하면 롤백하는 것.
+
+### Query Invalidation
+- Query Invalidation을 하면 해당 query는 stale 취급되고, 현재 rendering되고 있는 query들은 백그라운드에서 refetch됨
+```tsx
+// Invalidate all queries in the cache
+queryClient.invalidateQueries();
+// Invalidate all queries with a key that starts with 'todos'
+queryClient.invalidateQueries('todos');
+```
+
+## 👀 React Query Caching과 Synchronization
+
+### RFC 5861
+> HTTP Cache-Control Extensions for Stale Content
+
+✔︎ stale-while-revalidate
+- 백그라운드에서 stale reponse를 revalidate하는 동안 캐시가 가진 stale response를 반환
+```
+Cache-Control:max-age=600,stale-while-revalidate=30
+```
+- stale response는 신선하지 않은 낡은 데이터를 의미함.
+- 위 코드를 보면 600초 내에서는 Cache가 유효하고, 600초를 지나면 stale한 response가 되는 것
+- 다시 서버로 요청을 보내서 데이터를 받아오는 동안, 30초 동안은 캐시가 가진 stale response를 반환하는 것
+- 이를 통해 Latency를 숨기는 효과를 얻을 수 있음
+
+### 위 개념을 메모리 캐시에도 적용해보자
+- cacheTime: 메모리에 얼마만큼 있을 건지 (해당 시간 이후 GC에 의해 처리, default 5분)
+- staleTime: 얼마의 시간이 흐른 후에 데이터를 stale 취급할 것인지 (default 0)
+- refetchOnMount / refetchOnWindowFocus / refetchOnReconnect가 true이면 Mount / Window focus / Reconnect 시점에 data가 stale이라고 판단되면 모두 refetch
+![Query 상태 흐름](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_6.02.27.png)
+![Query 상태 흐름(active)](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_6.05.03.png)
+
+### React Query의 Default값 (zero-config)
+- Queries에서 cached data는 언제나 stale 취급된다.
+- 각 시점에서 data가 stale이라면 항상 refetch가 발생한다.
+- inactive Query들은 5분 뒤에 GC에 의해 처리된다.
+- Query 실패 시 3번까지 retry한다.
 
 ## ☸️ 쿠버네티스
 

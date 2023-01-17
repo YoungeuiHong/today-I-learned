@@ -36,6 +36,13 @@
 ### What is React Query?
 - Fetch, cache and update data in your React application without touching any 'global state'.
 
+### React Query의 장점
+- 서버 상태 관리가 용이하고 API 호출 코드가 직관적임
+- API 처리에 관한 각종 인터페이스와 옵션의 사용이 가능함
+- Client Store에 프론트에서 정말로 필요로 하는 전역 상태만 남아서 Store답게 사용됨
+- devtool이 제공되어 원활한 디버깅 가능
+- Cache 전략을 사용할 때 좋음
+
 ## 🚀 React Query 사용 방법
 
 ### QueryClientProvider
@@ -112,7 +119,7 @@ queryClient.invalidateQueries();
 queryClient.invalidateQueries('todos');
 ```
 
-## 👀 React Query Caching과 Synchronization
+## 👀 React Query에서 Caching과 Synchronization
 
 ### RFC 5861
 > HTTP Cache-Control Extensions for Stale Content
@@ -139,6 +146,15 @@ Cache-Control:max-age=600,stale-while-revalidate=30
 - 각 시점에서 data가 stale이라면 항상 refetch가 발생한다.
 - inactive Query들은 5분 뒤에 GC에 의해 처리된다.
 - Query 실패 시 3번까지 retry한다.
+
+## 🤔 React Query는 어디에서 값들을 관리할까?
+
+### 전역 상태처럼 관리되는 데이터들
+![전역 상태처럼 관리하는 Server State](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_6.19.49.png)
+=> 해답은 Context API에 있다!
+
+### QueryClient 내부적으로 Context를 사용함
+![Query Client Context](https://gitlab.com/public-space2/public-img/-/raw/main/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-01-17_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_6.22.26.png)
 
 ## ☸️ 쿠버네티스
 

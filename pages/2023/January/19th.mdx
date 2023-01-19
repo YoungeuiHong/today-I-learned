@@ -1,0 +1,34 @@
+# 19th January, 2023
+
+## 🚌 Istio
+
+### Istio Vertual Service
+🔗 [간단한 예제로 보는 Istio VirtualService와 Destination 을 활용한 Istio Traffic Routing의 이해
+](https://itnp.kr/post/istio-routing-api)
+- Traffic Management 는 소스코드의 변경없이 트래픽의 경로를 경로를 변경 관리할 수 있는 기능
+- 수많은 마이크로서비스과 그들간의 트래픽이 오고가는 서비스메시에서 기본이 되는 주요한 기능
+
+🔻 **deployment.yml**
+```yml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: example-shared-inf
+  namespace: example
+spec:
+  gateways:
+    - example-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+      - uri:
+          prefix: /inf/shared/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: shared
+            port:
+              number: 8080
+```

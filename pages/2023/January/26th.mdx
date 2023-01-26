@@ -5,6 +5,12 @@
 ### Storybook Vite 관련 설정
 [스토리북 webpack에서 vite로 마이그레이션하기](https://velog.io/@dev2820/%EC%8A%A4%ED%86%A0%EB%A6%AC%EB%B6%81-webpack%EC%97%90%EC%84%9C-vite%EB%A1%9C-%EB%A7%88%EC%9D%B4%EA%B7%B8%EB%A0%88%EC%9D%B4%EC%85%98%ED%95%98%EA%B8%B0)
 
+### Decorators
+- Decorators는 렌더링에 필요한 기타 기능으로 Story를 wrapping하는 데에 사용된다.
+- Context 설정, CSS 설정 등에 사용할 수 있다.
+- 모든 stories에 공통적으로 적용되는 Decorators는 `.storybook/preview.js`에 설정하면 된다.
+- 개별 story에 적용할 때에는 named export 부분에서 설정하면 된다.
+
 ## 🚀 ES6
 
 ### `export default`와 `export const/function`의 차이

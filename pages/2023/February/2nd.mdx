@@ -1,0 +1,10 @@
+# 2nd February, 2023
+
+## 🚀 React Query
+
+### useQuery 호출 시 발생한 에러
+```text
+Invalid hook call. Hooks can only be called inside of the body of a function component.
+```
+- `useQuery`를 `useEffect` 내에서 호출하여 발생한 오류였음.
+- `useQuery`를 `useEffect` 내에서 호출하는 것은 불가능하고, 애초에 권장되지 않는 패턴
